@@ -47,7 +47,16 @@ export async function POST(req: NextRequest) {
 
     // Generate resume using Groq API
     const prompt = `Create a professional resume for ${name} with job title "${title}". Professional summary: ${experience || 'Experienced professional with strong skills and achievements.'}. Include sections for Experience, Education, Skills, and Certifications.`;
-    const output = await generateWithGroq(prompt, 2000);
+    let output;
+    try {
+      output = await generateWithGroq(prompt, 2000);
+    } catch (genError: any) {
+      console.error('Groq generation error:', genError);
+      return NextResponse.json(
+        errorResponse('Failed to generate resume', genError.message),
+        { status: 500 }
+      );
+    }
 
     // Deduct credits
     user.credits -= CREDITS_PER_REQUEST;

@@ -47,7 +47,16 @@ export async function POST(req: NextRequest) {
 
     // Generate poster using Groq API
     const prompt = `Create a poster design description in JSON format with HTML for a poster titled "${title}" with description "${description || 'Your description here'}". Include design recommendations with colors, layout, and styling.`;
-    const output = await generateWithGroq(prompt, 1500);
+    let output;
+    try {
+      output = await generateWithGroq(prompt, 1500);
+    } catch (genError: any) {
+      console.error('Groq generation error:', genError);
+      return NextResponse.json(
+        errorResponse('Failed to generate poster', genError.message),
+        { status: 500 }
+      );
+    }
 
     // Deduct credits
     user.credits -= CREDITS_PER_REQUEST;

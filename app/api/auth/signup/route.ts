@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
       successResponse('User created successfully', {
         token,
         user: {
-          id: user._id,
+          id: user._id.toString(),
           name: user.name,
           email: user.email,
           credits: user.credits,
@@ -63,6 +63,26 @@ export async function POST(req: NextRequest) {
     );
   } catch (error: any) {
     console.error('Signup error:', error);
+    
+    // Handle MongoDB validation errors
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors)
+        .map((err: any) => err.message)
+        .join(', ');
+      return NextResponse.json(
+        errorResponse('Validation error', messages),
+        { status: 400 }
+      );
+    }
+    
+    // Handle duplicate email error
+    if (error.code === 11000) {
+      return NextResponse.json(
+        errorResponse('Email already exists'),
+        { status: 400 }
+      );
+    }
+    
     return NextResponse.json(
       errorResponse('Error creating user', error.message),
       { status: 500 }

@@ -70,8 +70,9 @@ export async function POST(req: NextRequest) {
     );
   } catch (error: any) {
     console.error('Text generation error:', error);
+    const errorMsg = error.message || 'Failed to generate text';
     return NextResponse.json(
-      errorResponse('Error generating text', error.message),
+      errorResponse('Error generating text', errorMsg),
       { status: 500 }
     );
   }

@@ -47,7 +47,16 @@ export async function POST(req: NextRequest) {
 
     // Generate website using Groq API
     const prompt = `Create a complete HTML website with professional design. Title: "${title}". Description: "${description || 'Welcome to our website'}". Include header with gradient background, features section with cards, and footer. Make it modern and responsive with inline CSS.`;
-    const output = await generateWithGroq(prompt, 2500);
+    let output;
+    try {
+      output = await generateWithGroq(prompt, 2500);
+    } catch (genError: any) {
+      console.error('Groq generation error:', genError);
+      return NextResponse.json(
+        errorResponse('Failed to generate website', genError.message),
+        { status: 500 }
+      );
+    }
 
     // Deduct credits
     user.credits -= CREDITS_PER_REQUEST;

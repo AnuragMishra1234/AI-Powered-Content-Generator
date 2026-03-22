@@ -14,7 +14,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-[url('beautiful-view-stars-night-sky.jpg')] bg-cover bg-center bg-no-repeat">
       {/* Navigation */}
       <nav className="p-4 md:p-6 flex justify-between items-center">
         <h1 className="text-2xl font-bold gradient-text">GenAI Hub</h1>
